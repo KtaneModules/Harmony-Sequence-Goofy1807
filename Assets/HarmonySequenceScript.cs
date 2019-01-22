@@ -22,7 +22,7 @@ public class HarmonySequenceScript : MonoBehaviour {
     public Material SIUnlit;
 
 
-    private static int[][] stages = new[]
+    private int[][] stages = new[]
     {
         new[] { 0, 0, 0, 0 },
         new[] { 0, 0, 0, 0 },
@@ -70,12 +70,14 @@ public class HarmonySequenceScript : MonoBehaviour {
     private int currentStage = 0;
     private int correctNotes = 0;
 
+    private Coroutine seqFlash;
+
 
     void Awake()
     {
         moduleId = moduleIdCounter++;
 
-        LstnBtn.OnInteract += delegate () { listen = true; Text[0].gameObject.SetActive(true); return false; };
+        LstnBtn.OnInteract += delegate () { LstnBtnPressed(); return false; };
         LstnBtn.OnInteractEnded += delegate () { listen = false; Text[0].gameObject.SetActive(false); };
         for (int i = 0; i < 4; i++)
         {
@@ -89,6 +91,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         {   
 
             seqFlashActive = false;
+            StopCoroutine(seqFlash);
             Match(btnPressed);
             return false;
         };
@@ -96,10 +99,23 @@ public class HarmonySequenceScript : MonoBehaviour {
 
     void Start ()
     {
+        float scalar = transform.lossyScale.x;
+        for (var i = 0; i < SeqLights.Length; i++)
+            SeqLights[i].range *= scalar;
+
         moduleHarmony = Random.Range(0, harmonies.Length);
-        StartCoroutine(SeqFlash());
+        seqFlash = StartCoroutine(SeqFlash());
         ScrambleStages();
 	}
+
+    void LstnBtnPressed()
+    {
+        listen = true;
+        if (Text[3].gameObject.activeSelf)
+            Text[3].gameObject.SetActive(false);
+        Text[0].gameObject.SetActive(true);
+    }
+        
 
     void Match(int btnPressed)
     {
@@ -117,13 +133,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         }
         else
         {
-            Text[3].gameObject.SetActive(true);
-            Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - You pressed the wrong button - Strike", moduleId, currentStage);
-            correctNotes = 0;
-            DisableLights();
-            GetComponent<KMBombModule>().HandleStrike();
-            Strike++;
-            seqFlashActive = true;
+            StartCoroutine(StrikeHandler());
         }
     }
 
@@ -148,6 +158,20 @@ public class HarmonySequenceScript : MonoBehaviour {
                 sound.RemoveAt(index);
             }
         }
+    }
+
+    private IEnumerator StrikeHandler()
+    {
+        Text[3].gameObject.SetActive(true);
+        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - You pressed the wrong button - Strike", moduleId, currentStage);
+        correctNotes = 0;
+        DisableLights();
+        GetComponent<KMBombModule>().HandleStrike();
+        Strike++;
+        yield return new WaitForSeconds(1f);
+        Text[3].gameObject.SetActive(false);
+        seqFlashActive = true;
+        seqFlash = StartCoroutine(SeqFlash());
     }
 
     private IEnumerator StageComplete()
@@ -177,7 +201,7 @@ public class HarmonySequenceScript : MonoBehaviour {
             Text[1].gameObject.SetActive(false);
             yield return new WaitForSeconds(1f);
             seqFlashActive = true;
-            StartCoroutine(SeqFlash());
+            seqFlash = StartCoroutine(SeqFlash());
         }
     }
 
@@ -205,9 +229,6 @@ public class HarmonySequenceScript : MonoBehaviour {
     {
         while (seqFlashActive)
         {
-            if (Text[3].gameObject.activeSelf)
-                Text[3].gameObject.SetActive(false);
-
             yield return new WaitForSeconds(1f);
 
             for (int i = 0; i < 4; i++)
