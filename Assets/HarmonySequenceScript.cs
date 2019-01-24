@@ -18,8 +18,10 @@ public class HarmonySequenceScript : MonoBehaviour {
     public Light[] SeqLights;
     public AudioClip[] Sounds;
     public GameObject[] Text;
+    public GameObject[] ModuleInstrumentText;
     public GameObject[] StageIndicators;
     public Material SIUnlit;
+    public KMSelectable[] InsCycBtns;
 
 
     private int[][] stages = new[]
@@ -30,45 +32,60 @@ public class HarmonySequenceScript : MonoBehaviour {
         new[] { 0, 0, 0, 0 }
     };
 
-    private static readonly string[][][] harmonies = new[]
+    private static readonly string[][][][] harmonies = new[]
     {
         new[]
-        { 
-            new[] { "d4", "f4", "a4", "d5"}, 
-            new[] { "d4", "f4", "ais4", "d5" },
-            new[] { "c4", "f4", "a4", "c5" },
-            new[] { "c4", "e4", "g4", "c5" }
+        {
+            new[]
+            {
+                new[] { "mb_d4", "mb_f4", "mb_a4", "mb_d5"},
+                new[] { "mb_d4", "mb_f4", "mb_ais4", "mb_d5" },
+                new[] { "mb_c4", "mb_f4", "mb_a4", "mb_c5" },
+                new[] { "mb_c4", "mb_e4", "mb_g4", "mb_c5" }
+            }
         },
         new[]
-        { 
-            new[] { "d4", "f4", "a4", "d5"}, 
-            new[] { "d4", "f4", "ais4", "d5" },
-            new[] { "c4", "f4", "a4", "c5" },
-            new[] { "c4", "e4", "g4", "c5" }
+        {
+            new[]
+            {
+                new[] { "p_d4", "p_f4", "p_a4", "p_d5"},
+                new[] { "p_d4", "p_f4", "p_ais4", "p_d5" },
+                new[] { "p_c4", "p_f4", "p_a4", "p_c5" },
+                new[] { "p_c4", "p_e4", "p_g4", "p_c5" }
+            }
         },
         new[]
-        { 
-            new[] { "d4", "f4", "a4", "d5"}, 
-            new[] { "d4", "f4", "ais4", "d5" },
-            new[] { "c4", "f4", "a4", "c5" },
-            new[] { "c4", "e4", "g4", "c5" }
+        {
+            new[]
+            {
+                new[] { "xy_d5", "xy_f5", "xy_a5", "xy_d6"},
+                new[] { "xy_d5", "xy_f5", "xy_ais5", "xy_d6" },
+                new[] { "xy_c5", "xy_f5", "xy_a5", "xy_c6" },
+                new[] { "xy_c5", "xy_e5", "xy_g5", "xy_c6" }
+            }
         },
         new[]
-        { 
-            new[] { "d4", "f4", "a4", "d5"}, 
-            new[] { "d4", "f4", "ais4", "d5" },
-            new[] { "c4", "f4", "a4", "c5" },
-            new[] { "c4", "e4", "g4", "c5" }
-        },
+        {
+            new[]
+            {
+                new[] { "ha_d5", "ha_f5", "ha_a5", "ha_d6"},
+                new[] { "ha_d5", "ha_f5", "ha_ais5", "ha_d6" },
+                new[] { "ha_c5", "ha_f5", "ha_a5", "ha_c6" },
+                new[] { "ha_c5", "ha_e5", "ha_g5", "ha_c6" }
+            }
+        }
     };
 
     private bool seqFlashActive = true;
     private bool listen = false;
 
     private int moduleHarmony;
+    private int moduleInstrument = 0;
     private int Strike = 0;
     private int currentStage = 0;
     private int correctNotes = 0;
+    private int currentModuleInstrument = 0;
+    private int lastModuleInstrument = 0;
 
     private Coroutine seqFlash;
 
@@ -81,18 +98,51 @@ public class HarmonySequenceScript : MonoBehaviour {
         LstnBtn.OnInteractEnded += delegate () { listen = false; Text[0].gameObject.SetActive(false); };
         for (int i = 0; i < 4; i++)
         {
-        SeqBtns[i].OnInteract += SeqBtnsPress(i);
+            SeqBtns[i].OnInteract += SeqBtnsPress(i);
         }
+        for (int i = 0; i < 2; i++)
+        {
+            InsCycBtns[i].OnInteract += InsCycBtnsPress(i);
+        }
+        
     }
 
     private KMSelectable.OnInteractHandler SeqBtnsPress(int btnPressed)
     {
         return delegate ()
-        {   
-
-            seqFlashActive = false;
+        {
             StopCoroutine(seqFlash);
+            if (seqFlashActive)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    SeqLights[i].gameObject.SetActive(false);
+                }
+            }
+            seqFlashActive = false;
             Match(btnPressed);
+            return false;
+        };
+    }
+
+    private KMSelectable.OnInteractHandler InsCycBtnsPress(int btnPressed)
+    {
+        return delegate ()
+        {
+            if (btnPressed == 0)
+            {
+                if (moduleInstrument == 0)
+                    moduleInstrument = 3;
+                else
+                    moduleInstrument--;
+            }
+            else
+            {
+                if (moduleInstrument == 3)
+                    moduleInstrument = 0;
+                else
+                    moduleInstrument++;
+            }
             return false;
         };
     }
@@ -103,7 +153,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         for (var i = 0; i < SeqLights.Length; i++)
             SeqLights[i].range *= scalar;
 
-        moduleHarmony = Random.Range(0, harmonies.Length);
+        moduleHarmony = Random.Range(0, harmonies[moduleInstrument].Length);
         seqFlash = StartCoroutine(SeqFlash());
         ScrambleStages();
 	}
@@ -122,7 +172,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - Excepted Button #{2} - You pressed Button #{3}", moduleId, currentStage, Array.IndexOf(stages[currentStage], correctNotes), btnPressed);
         if (btnPressed == Array.IndexOf(stages[currentStage], correctNotes))
         {
-            Audio.PlaySoundAtTransform(harmonies[moduleHarmony][currentStage][stages[currentStage][btnPressed]], transform);
+            Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][btnPressed]], transform);
             SeqLights[btnPressed].gameObject.SetActive(true);
             correctNotes++;
             if (correctNotes == 4)
@@ -183,7 +233,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         for (int i = 0; i < 4; i++)
         {
             SeqLights[i].gameObject.SetActive(true);
-            Audio.PlaySoundAtTransform(harmonies[moduleHarmony][currentStage][i], transform);
+            Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][i], transform);
             yield return new WaitForSeconds(0.1f);
         }
         yield return new WaitForSeconds(0.5f);
@@ -213,7 +263,7 @@ public class HarmonySequenceScript : MonoBehaviour {
             for (int j = 0; j < 4; j++)
             {
                 SeqLights[j].gameObject.SetActive(true);
-                Audio.PlaySoundAtTransform(harmonies[moduleHarmony][i][j], transform);
+                Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][i][j], transform);
                 yield return new WaitForSeconds(0.05f);
             }
             yield return new WaitForSeconds(0.5f);
@@ -239,11 +289,22 @@ public class HarmonySequenceScript : MonoBehaviour {
                     break;
                 }
                 if (listen)
-                    Audio.PlaySoundAtTransform(harmonies[moduleHarmony][currentStage][stages[currentStage][i]], transform);
+                    Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][i]], transform);
                 SeqLights[i].gameObject.SetActive(true);
                 yield return new WaitForSeconds(0.2f);
                 SeqLights[i].gameObject.SetActive(false);
             }
+        }
+    }
+
+    void Update()
+    {
+        lastModuleInstrument = currentModuleInstrument;
+        currentModuleInstrument = moduleInstrument;
+        if (lastModuleInstrument != currentModuleInstrument)
+        {
+            ModuleInstrumentText[lastModuleInstrument].gameObject.SetActive(false);
+            ModuleInstrumentText[currentModuleInstrument].gameObject.SetActive(true);
         }
     }
 }

@@ -26,13 +26,50 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs10" />
+     id="defs10">
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect942"
+       is_visible="true"
+       offset_points="3,0.5"
+       sort_points="true"
+       interpolator_type="CubicBezierJohan"
+       interpolator_beta="0.2"
+       start_linecap_type="zerowidth"
+       linejoin_type="extrp_arc"
+       miter_limit="4"
+       end_linecap_type="zerowidth" />
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect938"
+       is_visible="true"
+       offset_points="3,0.5"
+       sort_points="true"
+       interpolator_type="CubicBezierJohan"
+       interpolator_beta="0.2"
+       start_linecap_type="zerowidth"
+       linejoin_type="extrp_arc"
+       miter_limit="4"
+       end_linecap_type="zerowidth" />
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect934"
+       is_visible="true"
+       offset_points="0,0.5"
+       sort_points="true"
+       interpolator_type="CubicBezierJohan"
+       interpolator_beta="0.2"
+       start_linecap_type="zerowidth"
+       linejoin_type="extrp_arc"
+       miter_limit="4"
+       end_linecap_type="zerowidth" />
+  </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
+     objecttolerance="10000"
+     gridtolerance="10000"
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
@@ -41,12 +78,18 @@
      id="namedview8"
      showgrid="true"
      inkscape:zoom="1.9181287"
-     inkscape:cx="168.62388"
-     inkscape:cy="172.67818"
+     inkscape:cx="138.85932"
+     inkscape:cy="160.5015"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg6" />
+     inkscape:current-layer="svg6">
+    <inkscape:grid
+       type="xygrid"
+       id="grid920"
+       spacingx="1"
+       spacingy="1" />
+  </sodipodi:namedview>
   <path
      d="M5.079 5.776h336.913v337.67H5.08z"
      stroke-width="2"
@@ -69,14 +112,14 @@
      id="rect896"
      width="50"
      height="100"
-     x="50"
+     x="23.921259"
      y="198" />
   <rect
      style="opacity:1;fill:#383838;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      id="rect898"
      width="50"
      height="100"
-     x="250"
+     x="76.141823"
      y="198" />
   <rect
      style="opacity:1;fill:#ebebeb;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -118,28 +161,28 @@
      id="rect910"
      width="40"
      height="35"
-     x="55"
+     x="28.921259"
      y="208" />
   <rect
      style="opacity:1;fill:#ababab;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      id="rect912"
      width="40"
      height="35"
-     x="55"
+     x="28.921259"
      y="253" />
   <rect
      style="opacity:1;fill:#ababab;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      id="rect914"
      width="40"
      height="35"
-     x="255"
+     x="81.141823"
      y="208" />
   <rect
      style="opacity:1;fill:#ababab;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      id="rect916"
      width="40"
      height="35"
-     x="255"
+     x="81.141823"
      y="253" />
   <circle
      style="opacity:1;fill:#919191;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -147,4 +190,20 @@
      cx="175"
      cy="248"
      r="40" />
+  <rect
+     style="opacity:1;fill:#383838;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect924"
+     width="100"
+     height="70"
+     x="225"
+     y="213" />
+  <path
+     style="fill:#939393;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+     d="M 275 288 L 265 303 L 275 298 L 285 303 L 275 288 z "
+     id="path944" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#939393;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:1;fill-opacity:1"
+     d="m 274.99999,208.38783 10.00001,-15 -10.00001,5 -10,-5 z"
+     id="path944-4" />
 </svg>
