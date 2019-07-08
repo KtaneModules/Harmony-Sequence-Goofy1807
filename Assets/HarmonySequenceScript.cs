@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Text.RegularExpressions;
 
 public class HarmonySequenceScript : MonoBehaviour {
 
@@ -297,6 +298,28 @@ public class HarmonySequenceScript : MonoBehaviour {
         }
     }
 
+    private IEnumerator SeqFlashSlow()
+    {
+        while (seqFlashActive)
+        {
+            yield return new WaitForSeconds(1f);
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (!seqFlashActive)
+                {
+                    i = 4;
+                    break;
+                }
+                if (listen)
+                    Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][i]], transform);
+                SeqLights[i].gameObject.SetActive(true);
+                yield return new WaitForSeconds(0.4f);
+                SeqLights[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
     void Update()
     {
         lastModuleInstrument = currentModuleInstrument;
@@ -305,6 +328,130 @@ public class HarmonySequenceScript : MonoBehaviour {
         {
             ModuleInstrumentText[lastModuleInstrument].gameObject.SetActive(false);
             ModuleInstrumentText[currentModuleInstrument].gameObject.SetActive(true);
+        }
+    }
+
+    //twitch plays
+    private bool inputIsValid(string cmd)
+    {
+        string[] valids = { "1","2","3","4" };
+        string[] nums = cmd.Split(',',';');
+        foreach(string num in nums)
+        {
+            if(!valids.Contains(num))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} listen (slow) [Plays all sounds for the current harmony sequence from left to right (option to make slower if slow is included)] | !{0} sound 1 [Selects sound #1] | !{0} sound 1,2,3 [Selects sounds #1, 2, and 3 in that order] | !{0} instrument <instrument> [Sets the instrument to the specified instrument] | !{0} reset [Clears all inputted sounds] | Valid sound #'s are 1-4 (left to right) and valid instruments are music, xylo, piano, and harp";
+    #pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        string[] parameters = command.Split(' ');
+        if(parameters.Length == 2)
+        {
+            if (Regex.IsMatch(parameters[0], @"^\s*listen\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && Regex.IsMatch(parameters[1], @"^\s*slow\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+            {
+                yield return null;
+                StopCoroutine(seqFlash);
+                DisableLights();
+                seqFlash = StartCoroutine(SeqFlashSlow());
+                LstnBtn.OnInteract();
+                yield return new WaitForSeconds(3.0f);
+                LstnBtn.OnInteractEnded();
+                StopCoroutine(seqFlash);
+                seqFlash = StartCoroutine(SeqFlash());
+                yield break;
+            }
+            if (Regex.IsMatch(parameters[0], @"^\s*instrument\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && (Regex.IsMatch(parameters[1], @"^\s*xylo\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(parameters[1], @"^\s*piano\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(parameters[1], @"^\s*music\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(parameters[1], @"^\s*harp\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)))
+            {
+                yield return null;
+                int rando = Random.Range(0,2);
+                if (parameters[1].EqualsIgnoreCase("music"))
+                {
+                    while(currentModuleInstrument != 0)
+                    {
+                        InsCycBtns[rando].OnInteract();
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }else if (parameters[1].EqualsIgnoreCase("piano"))
+                {
+                    while (currentModuleInstrument != 1)
+                    {
+                        InsCycBtns[rando].OnInteract();
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }else if (parameters[1].EqualsIgnoreCase("xylo"))
+                {
+                    while (currentModuleInstrument != 2)
+                    {
+                        InsCycBtns[rando].OnInteract();
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+                else
+                {
+                    while (currentModuleInstrument != 3)
+                    {
+                        InsCycBtns[rando].OnInteract();
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+                yield break;
+            }
+            if (Regex.IsMatch(parameters[0], @"^\s*sound\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+            {
+                if (inputIsValid(parameters[1]))
+                {
+                    yield return null;
+                    string[] nums = parameters[1].Split(',',';');
+                    foreach(string num in nums)
+                    {
+                        int temp = 0;
+                        int.TryParse(num, out temp);
+                        if (temp == 1)
+                        {
+                            SeqBtns[0].OnInteract();
+                        }
+                        else if (temp == 2)
+                        {
+                            SeqBtns[1].OnInteract();
+                        }
+                        else if (temp == 3)
+                        {
+                            SeqBtns[2].OnInteract();
+                        }
+                        else
+                        {
+                            SeqBtns[3].OnInteract();
+                        }
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                }
+                yield break;
+            }
+        }
+        if (Regex.IsMatch(command, @"^\s*listen\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            yield return null;
+            StopCoroutine(seqFlash);
+            DisableLights();
+            seqFlash = StartCoroutine(SeqFlash());
+            LstnBtn.OnInteract();
+            yield return new WaitForSeconds(2.0f);
+            LstnBtn.OnInteractEnded();
+            yield break;
+        }
+        if (Regex.IsMatch(command, @"^\s*reset\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            yield return null;
+            correctNotes = 0;
+            DisableLights();
+            yield break;
         }
     }
 }
