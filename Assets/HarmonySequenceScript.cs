@@ -5,7 +5,8 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Text.RegularExpressions;
 
-public class HarmonySequenceScript : MonoBehaviour {
+public class HarmonySequenceScript : MonoBehaviour
+{
 
     public KMAudio Audio;
     public KMBombInfo Bomb;
@@ -79,6 +80,7 @@ public class HarmonySequenceScript : MonoBehaviour {
 
     private bool seqFlashActive = true;
     private bool listen = false;
+    private bool harmonyRunning = false;
 
     private int moduleHarmony;
     private int moduleInstrument = 0;
@@ -95,8 +97,24 @@ public class HarmonySequenceScript : MonoBehaviour {
     {
         moduleId = moduleIdCounter++;
 
-        LstnBtn.OnInteract += delegate () { LstnBtnPressed(); return false; };
-        LstnBtn.OnInteractEnded += delegate () { listen = false; Text[0].gameObject.SetActive(false); };
+        LstnBtn.OnInteract += delegate ()
+        {
+            if (moduleSolved)
+            {
+                if (harmonyRunning)
+                    return false;
+                StartCoroutine(Harmony());
+                return false;
+            }
+
+            LstnBtnPressed();
+            return false;
+        };
+        LstnBtn.OnInteractEnded += delegate ()
+        {
+            listen = false;
+            Text[0].gameObject.SetActive(false);
+        };
         for (int i = 0; i < 4; i++)
         {
             SeqBtns[i].OnInteract += SeqBtnsPress(i);
@@ -105,13 +123,15 @@ public class HarmonySequenceScript : MonoBehaviour {
         {
             InsCycBtns[i].OnInteract += InsCycBtnsPress(i);
         }
-        
+
     }
 
     private KMSelectable.OnInteractHandler SeqBtnsPress(int btnPressed)
     {
         return delegate ()
         {
+            if (moduleSolved)
+                return false;
             StopCoroutine(seqFlash);
             if (seqFlashActive)
             {
@@ -148,7 +168,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         };
     }
 
-    void Start ()
+    void Start()
     {
         float scalar = transform.lossyScale.x;
         for (var i = 0; i < SeqLights.Length; i++)
@@ -157,7 +177,7 @@ public class HarmonySequenceScript : MonoBehaviour {
         moduleHarmony = Random.Range(0, harmonies[moduleInstrument].Length);
         seqFlash = StartCoroutine(SeqFlash());
         ScrambleStages();
-	}
+    }
 
     void LstnBtnPressed()
     {
@@ -166,11 +186,11 @@ public class HarmonySequenceScript : MonoBehaviour {
             Text[3].gameObject.SetActive(false);
         Text[0].gameObject.SetActive(true);
     }
-        
+
 
     void Match(int btnPressed)
     {
-        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - Excepted Button #{2} - You pressed Button #{3}", moduleId, currentStage, Array.IndexOf(stages[currentStage], correctNotes), btnPressed);
+        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - Excepted Button #{2} - You pressed Button #{3}", moduleId, currentStage + 1, Array.IndexOf(stages[currentStage], correctNotes) + 1, btnPressed + 1);
         if (btnPressed == Array.IndexOf(stages[currentStage], correctNotes))
         {
             Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][btnPressed]], transform);
@@ -214,7 +234,7 @@ public class HarmonySequenceScript : MonoBehaviour {
     private IEnumerator StrikeHandler()
     {
         Text[3].gameObject.SetActive(true);
-        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - You pressed the wrong button - Strike", moduleId, currentStage);
+        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - You pressed the wrong button - Strike", moduleId, currentStage + 1);
         correctNotes = 0;
         DisableLights();
         GetComponent<KMBombModule>().HandleStrike();
@@ -259,6 +279,17 @@ public class HarmonySequenceScript : MonoBehaviour {
     private IEnumerator ModulePass()
     {
         Text[2].gameObject.SetActive(true);
+        StartCoroutine(Harmony());
+        yield return new WaitUntil(() => !harmonyRunning);
+        GetComponent<KMBombModule>().HandlePass();
+        moduleSolved = true;
+        Debug.LogFormat(@"[Harmony Sequence #{0}] You passed the module - Strikes caused by this module: {1}", moduleId, Strike);
+        StopAllCoroutines();
+    }
+
+    private IEnumerator Harmony()
+    {
+        harmonyRunning = true;
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -271,9 +302,7 @@ public class HarmonySequenceScript : MonoBehaviour {
             DisableLights();
             yield return new WaitForSeconds(0.5f);
         }
-        GetComponent<KMBombModule>().HandlePass();
-        Debug.LogFormat(@"[Harmony Sequence #{0}] You passed the module - Strikes caused by this module: {1}", moduleId, Strike);
-        StopAllCoroutines();
+        harmonyRunning = false;
     }
 
     private IEnumerator SeqFlash()
@@ -331,118 +360,30 @@ public class HarmonySequenceScript : MonoBehaviour {
         }
     }
 
-    //twitch plays
-    private bool inputIsValid(string cmd)
-    {
-        string[] valids = { "1","2","3","4" };
-        string[] nums = cmd.Split(',',';');
-        foreach(string num in nums)
-        {
-            if(!valids.Contains(num))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} listen (slow) [Plays all sounds for the current harmony sequence from left to right (option to make slower if slow is included)] | !{0} sound 1 [Selects sound #1] | !{0} sound 1,2,3 [Selects sounds #1, 2, and 3 in that order] | !{0} instrument <instrument> [Sets the instrument to the specified instrument] | !{0} reset [Clears all inputted sounds] | Valid sound #'s are 1-4 (left to right) and valid instruments are music, xylo, piano, and harp";
-    #pragma warning restore 414
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} start [start listening to the sequence] | !{0} stop [stop listening] | !{0} sound 1,2,3,4 [presses buttons in that order] | !{0} instrument music/xylo/piano/harp [sets the instrument] | !{0} reset [clears all inputted sounds]";
+#pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
-        string[] parameters = command.Split(' ');
-        if(parameters.Length == 2)
+        if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
-            if (Regex.IsMatch(parameters[0], @"^\s*listen\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && Regex.IsMatch(parameters[1], @"^\s*slow\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+            if (listen)
             {
-                yield return null;
-                StopCoroutine(seqFlash);
-                DisableLights();
-                seqFlash = StartCoroutine(SeqFlashSlow());
-                LstnBtn.OnInteract();
-                yield return new WaitForSeconds(3.0f);
-                LstnBtn.OnInteractEnded();
-                StopCoroutine(seqFlash);
-                seqFlash = StartCoroutine(SeqFlash());
+                yield return "sendtochaterror The module is already listening.";
                 yield break;
             }
-            if (Regex.IsMatch(parameters[0], @"^\s*instrument\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && (Regex.IsMatch(parameters[1], @"^\s*xylo\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(parameters[1], @"^\s*piano\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(parameters[1], @"^\s*music\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(parameters[1], @"^\s*harp\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)))
-            {
-                yield return null;
-                int rando = Random.Range(0,2);
-                if (parameters[1].EqualsIgnoreCase("music"))
-                {
-                    while(currentModuleInstrument != 0)
-                    {
-                        InsCycBtns[rando].OnInteract();
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                }else if (parameters[1].EqualsIgnoreCase("piano"))
-                {
-                    while (currentModuleInstrument != 1)
-                    {
-                        InsCycBtns[rando].OnInteract();
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                }else if (parameters[1].EqualsIgnoreCase("xylo"))
-                {
-                    while (currentModuleInstrument != 2)
-                    {
-                        InsCycBtns[rando].OnInteract();
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                }
-                else
-                {
-                    while (currentModuleInstrument != 3)
-                    {
-                        InsCycBtns[rando].OnInteract();
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                }
-                yield break;
-            }
-            if (Regex.IsMatch(parameters[0], @"^\s*sound\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
-            {
-                if (inputIsValid(parameters[1]))
-                {
-                    yield return null;
-                    string[] nums = parameters[1].Split(',',';');
-                    foreach(string num in nums)
-                    {
-                        int temp = 0;
-                        int.TryParse(num, out temp);
-                        if (temp == 1)
-                        {
-                            SeqBtns[0].OnInteract();
-                        }
-                        else if (temp == 2)
-                        {
-                            SeqBtns[1].OnInteract();
-                        }
-                        else if (temp == 3)
-                        {
-                            SeqBtns[2].OnInteract();
-                        }
-                        else
-                        {
-                            SeqBtns[3].OnInteract();
-                        }
-                        yield return new WaitForSeconds(0.2f);
-                    }
-                }
-                yield break;
-            }
-        }
-        if (Regex.IsMatch(command, @"^\s*listen\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
-        {
             yield return null;
-            StopCoroutine(seqFlash);
-            DisableLights();
-            seqFlash = StartCoroutine(SeqFlash());
             LstnBtn.OnInteract();
-            yield return new WaitForSeconds(2.0f);
+            yield break;
+        }
+        if (Regex.IsMatch(command, @"^\s*stop\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            if (!listen)
+            {
+                yield return "sendtochaterror The module is not listening.";
+                yield break;
+            }
+            yield return null;
             LstnBtn.OnInteractEnded();
             yield break;
         }
@@ -451,6 +392,43 @@ public class HarmonySequenceScript : MonoBehaviour {
             yield return null;
             correctNotes = 0;
             DisableLights();
+            yield break;
+        }
+        Match m;
+        if ((m = Regex.Match(command, @"^\s*instrument\s+(xylo|piano|music|harp)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        {
+            yield return null;
+            if (listen)
+                LstnBtn.OnInteractEnded();
+            var targetInstrument =
+                m.Groups[1].Value.EqualsIgnoreCase("music") ? 0 :
+                m.Groups[1].Value.EqualsIgnoreCase("piano") ? 1 :
+                m.Groups[1].Value.EqualsIgnoreCase("xylo") ? 2 : 3;
+
+            while (moduleInstrument != targetInstrument)
+            {
+                yield return new WaitForSeconds(0.1f);
+                InsCycBtns[0].OnInteract();
+            }
+            yield break;
+        }
+        if ((m = Regex.Match(command, @"^\s*sound\s+([\d,;]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        {
+            var numbers = m.Groups[1].Value.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(str =>
+            {
+                int value;
+                return int.TryParse(str, out value) ? value : (int?)null;
+            }).ToArray();
+            if (numbers.Length == 0 || numbers.Any(n => n == null || n.Value < 1 || n.Value > 4))
+                yield break;
+
+            yield return null;
+            if (listen)
+            {
+                LstnBtn.OnInteractEnded();
+                yield return new WaitForSeconds(.1f);
+            }
+            yield return numbers.Select(n => SeqBtns[n.Value - 1]).ToArray();
             yield break;
         }
     }
