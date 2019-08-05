@@ -10,7 +10,7 @@ public class HarmonySequenceScript : MonoBehaviour
 
     public KMAudio Audio;
     public KMBombInfo Bomb;
-
+   
     static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
@@ -44,6 +44,46 @@ public class HarmonySequenceScript : MonoBehaviour
                 new[] { "mb_d4", "mb_f4", "mb_ais4", "mb_d5" },
                 new[] { "mb_c4", "mb_f4", "mb_a4", "mb_c5" },
                 new[] { "mb_c4", "mb_e4", "mb_g4", "mb_c5" }
+            },
+
+            new[]
+            {
+                new[] { "mb_cis4", "mb_f4", "mb_gis4", "mb_cis5"},
+                new[] { "mb_fis4", "mb_ais4", "mb_cis5", "mb_fis5" },
+                new[] { "mb_dis4", "mb_fis4", "mb_ais4", "mb_dis5" },
+                new[] { "mb_c4", "mb_dis4", "mb_gis4", "mb_c5" }
+            },
+
+            new[]
+            {
+                new[] { "mb_a4", "mb_c5", "mb_e5", "mb_a5"},
+                new[] { "mb_g4", "mb_c5", "mb_e5", "mb_g5" },
+                new[] { "mb_f4", "mb_a4", "mb_c5", "mb_f5" },
+                new[] { "mb_c4", "mb_e4", "mb_g4", "mb_c5" }
+            },
+
+            new[]
+            {
+                new[] { "mb_a4", "mb_cis5", "mb_e5", "mb_a5"},
+                new[] { "mb_e4", "mb_gis4", "mb_h4", "mb_e5" },
+                new[] { "mb_fis4", "mb_a4", "mb_cis5", "mb_fis5" },
+                new[] { "mb_d4", "mb_fis4", "mb_a4", "mb_d5" }
+            },
+
+            new[]
+            {
+                new[] { "mb_d4", "mb_f4", "mb_a4", "mb_d5"},
+                new[] { "mb_ais4", "mb_d5", "mb_f5", "mb_ais5" },
+                new[] { "mb_f4", "mb_a4", "mb_c5", "mb_f5" },
+                new[] { "mb_c4", "mb_e4", "mb_g4", "mb_c5" }
+            },
+
+            new[]
+            {
+                new[] { "mb_c4", "mb_e4", "mb_g4", "mb_c5" },
+                new[] { "mb_e4", "mb_g4", "mb_h4", "mb_e5" },
+                new[] { "mb_a4", "mb_c5", "mb_e5", "mb_a5" },
+                new[] { "mb_f4", "mb_a4", "mb_c5", "mb_f5" }
             }
         },
         new[]
@@ -54,7 +94,48 @@ public class HarmonySequenceScript : MonoBehaviour
                 new[] { "p_d4", "p_f4", "p_ais4", "p_d5" },
                 new[] { "p_c4", "p_f4", "p_a4", "p_c5" },
                 new[] { "p_c4", "p_e4", "p_g4", "p_c5" }
+            },
+
+            new[]
+            {
+                new[] { "p_cis4", "p_f4", "p_gis4", "p_cis5"},
+                new[] { "p_fis4", "p_ais4", "p_cis5", "p_fis5" },
+                new[] { "p_dis4", "p_fis4", "p_ais4", "p_dis5" },
+                new[] { "p_c4", "p_dis4", "p_gis4", "p_c5" }
+            },
+
+            new[]
+            {
+                new[] { "p_a4", "p_c5", "p_e5", "p_a5"},
+                new[] { "p_g4", "p_c5", "p_e5", "p_g5" },
+                new[] { "p_f4", "p_a4", "p_c5", "p_f5" },
+                new[] { "p_c4", "p_e4", "p_g4", "p_c5" }
+            },           
+                         
+            new[]        
+            {            
+                new[] { "p_a4", "p_cis5", "p_e5", "p_a5"},
+                new[] { "p_e4", "p_gis4", "p_h4", "p_e5" },
+                new[] { "p_fis4", "p_a4", "p_cis5", "p_fis5" },
+                new[] { "p_d4", "p_fis4", "p_a4", "p_d5" }
+            },           
+                         
+            new[]        
+            {            
+                new[] { "p_d4", "p_f4", "p_a4", "p_d5"},
+                new[] { "p_ais4", "p_d5", "p_f5", "p_ais5" },
+                new[] { "p_f4", "p_a4", "p_c5", "p_f5" },
+                new[] { "p_c4", "p_e4", "p_g4", "p_c5" }
+            },           
+                         
+            new[]        
+            {            
+                new[] { "p_c4", "p_e4", "p_g4", "p_c5" },
+                new[] { "p_e4", "p_g4", "p_h4", "p_e5" },
+                new[] { "p_a4", "p_c5", "p_e5", "p_a5" },
+                new[] { "p_f4", "p_a4", "p_c5", "p_f5" }
             }
+
         },
         new[]
         {
@@ -64,6 +145,46 @@ public class HarmonySequenceScript : MonoBehaviour
                 new[] { "xy_d5", "xy_f5", "xy_ais5", "xy_d6" },
                 new[] { "xy_c5", "xy_f5", "xy_a5", "xy_c6" },
                 new[] { "xy_c5", "xy_e5", "xy_g5", "xy_c6" }
+            },
+
+            new[]
+            {
+                new[] { "xy_cis5", "xy_f5", "xy_gis5", "xy_cis6"},
+                new[] { "xy_fis5", "xy_ais5", "xy_cis6", "xy_fis6" },
+                new[] { "xy_dis5", "xy_fis5", "xy_ais5", "xy_dis6" },
+                new[] { "xy_c5", "xy_dis5", "xy_gis5", "xy_c6" }
+            },
+
+            new[]
+            {
+                new[] { "xy_a5", "xy_c6", "xy_e6", "xy_a6"},
+                new[] { "xy_g5", "xy_c6", "xy_e6", "xy_g6" },
+                new[] { "xy_f5", "xy_a5", "xy_c6", "xy_f6" },
+                new[] { "xy_c5", "xy_e5", "xy_g5", "xy_c6" }
+            },
+
+            new[]
+            {
+                new[] { "xy_a5", "xy_cis6", "xy_e6", "xy_a6"},
+                new[] { "xy_e5", "xy_gis5", "xy_h5", "xy_e6" },
+                new[] { "xy_fis5", "xy_a5", "xy_cis6", "xy_fis6" },
+                new[] { "xy_d5", "xy_fis5", "xy_a5", "xy_d6" }
+            },
+
+            new[]
+            {
+                new[] { "xy_d5", "xy_f5", "xy_a5", "xy_d6"},
+                new[] { "xy_ais5", "xy_d6", "xy_f6", "xy_ais6" },
+                new[] { "xy_f5", "xy_a5", "xy_c6", "xy_f6" },
+                new[] { "xy_c5", "xy_e5", "xy_g5", "xy_c6" }
+            },
+
+            new[]
+            {
+                new[] { "xy_c5", "xy_e5", "xy_g5", "xy_c6" },
+                new[] { "xy_e5", "xy_g5", "xy_h5", "xy_e6" },
+                new[] { "xy_a5", "xy_c6", "xy_e6", "xy_a6" },
+                new[] { "xy_f5", "xy_a5", "xy_c6", "xy_f6" }
             }
         },
         new[]
@@ -74,6 +195,46 @@ public class HarmonySequenceScript : MonoBehaviour
                 new[] { "ha_d5", "ha_f5", "ha_ais5", "ha_d6" },
                 new[] { "ha_c5", "ha_f5", "ha_a5", "ha_c6" },
                 new[] { "ha_c5", "ha_e5", "ha_g5", "ha_c6" }
+            },
+
+            new[]
+            {
+                new[] { "ha_cis5", "ha_f5", "ha_gis5", "ha_cis6"},
+                new[] { "ha_fis5", "ha_ais5", "ha_cis6", "ha_fis6" },
+                new[] { "ha_dis5", "ha_fis5", "ha_ais5", "ha_dis6" },
+                new[] { "ha_c5", "ha_dis5", "ha_gis5", "ha_c6" }
+            },
+
+            new[]
+            {
+                new[] { "ha_a5", "ha_c6", "ha_e6", "ha_a6"},
+                new[] { "ha_g5", "ha_c6", "ha_e6", "ha_g6" },
+                new[] { "ha_f5", "ha_a5", "ha_c6", "ha_f6" },
+                new[] { "ha_c5", "ha_e5", "ha_g5", "ha_c6" }
+            },
+
+            new[]
+            {
+                new[] { "ha_a5", "ha_cis6", "ha_e6", "ha_a6"},
+                new[] { "ha_e5", "ha_gis5", "ha_h5", "ha_e6" },
+                new[] { "ha_fis5", "ha_a5", "ha_cis6", "ha_fis6" },
+                new[] { "ha_d5", "ha_fis5", "ha_a5", "ha_d6" }
+            },
+
+            new[]
+            {
+                new[] { "ha_d5", "ha_f5", "ha_a5", "ha_d6"},
+                new[] { "ha_ais5", "ha_d6", "ha_f6", "ha_ais6" },
+                new[] { "ha_f5", "ha_a5", "ha_c6", "ha_f6" },
+                new[] { "ha_c5", "ha_e5", "ha_g5", "ha_c6" }
+            },
+
+            new[]
+            {
+                new[] { "ha_c5", "ha_e5", "ha_g5", "ha_c6" },
+                new[] { "ha_e5", "ha_g5", "ha_h5", "ha_e6" },
+                new[] { "ha_a5", "ha_c6", "ha_e6", "ha_a6" },
+                new[] { "ha_f5", "ha_a5", "ha_c6", "ha_f6" }
             }
         }
     };
@@ -81,6 +242,8 @@ public class HarmonySequenceScript : MonoBehaviour
     private bool seqFlashActive = true;
     private bool listen = false;
     private bool harmonyRunning = false;
+    private bool stageCompleteActive = false;
+    private bool strikeHandlerActive = false;
 
     private int moduleHarmony;
     private int moduleInstrument = 0;
@@ -90,8 +253,10 @@ public class HarmonySequenceScript : MonoBehaviour
     private int currentModuleInstrument = 0;
     private int lastModuleInstrument = 0;
 
-    private Coroutine seqFlash;
+    
 
+    private Coroutine seqFlash;
+   
 
     void Awake()
     {
@@ -104,6 +269,13 @@ public class HarmonySequenceScript : MonoBehaviour
                 if (harmonyRunning)
                     return false;
                 StartCoroutine(Harmony());
+                return false;
+            }
+
+            if (stageCompleteActive)
+            {
+
+                StartCoroutine(WaitForListen());
                 return false;
             }
 
@@ -130,8 +302,9 @@ public class HarmonySequenceScript : MonoBehaviour
     {
         return delegate ()
         {
-            if (moduleSolved)
+            if (moduleSolved || strikeHandlerActive || stageCompleteActive)
                 return false;
+
             StopCoroutine(seqFlash);
             if (seqFlashActive)
             {
@@ -233,6 +406,7 @@ public class HarmonySequenceScript : MonoBehaviour
 
     private IEnumerator StrikeHandler()
     {
+        strikeHandlerActive = true;
         Text[3].gameObject.SetActive(true);
         Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - You pressed the wrong button - Strike", moduleId, currentStage + 1);
         correctNotes = 0;
@@ -243,10 +417,18 @@ public class HarmonySequenceScript : MonoBehaviour
         Text[3].gameObject.SetActive(false);
         seqFlashActive = true;
         seqFlash = StartCoroutine(SeqFlash());
+        strikeHandlerActive = false;
+    }
+
+    private IEnumerator WaitForListen()
+    {
+       yield return new WaitUntil(() => !stageCompleteActive);
+       LstnBtnPressed();
     }
 
     private IEnumerator StageComplete()
     {
+        stageCompleteActive = true;
         yield return new WaitForSeconds(0.5f);
         DisableLights();
         yield return new WaitForSeconds(0.5f);
@@ -266,6 +448,7 @@ public class HarmonySequenceScript : MonoBehaviour
             Text[1].gameObject.SetActive(false);
             yield return new WaitForSeconds(1f);
             StartCoroutine(ModulePass());
+            stageCompleteActive = false;
         }
         else
         {
@@ -273,6 +456,7 @@ public class HarmonySequenceScript : MonoBehaviour
             yield return new WaitForSeconds(1f);
             seqFlashActive = true;
             seqFlash = StartCoroutine(SeqFlash());
+            stageCompleteActive = false;
         }
     }
 
@@ -322,28 +506,6 @@ public class HarmonySequenceScript : MonoBehaviour
                     Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][i]], transform);
                 SeqLights[i].gameObject.SetActive(true);
                 yield return new WaitForSeconds(0.2f);
-                SeqLights[i].gameObject.SetActive(false);
-            }
-        }
-    }
-
-    private IEnumerator SeqFlashSlow()
-    {
-        while (seqFlashActive)
-        {
-            yield return new WaitForSeconds(1f);
-
-            for (int i = 0; i < 4; i++)
-            {
-                if (!seqFlashActive)
-                {
-                    i = 4;
-                    break;
-                }
-                if (listen)
-                    Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][i]], transform);
-                SeqLights[i].gameObject.SetActive(true);
-                yield return new WaitForSeconds(0.4f);
                 SeqLights[i].gameObject.SetActive(false);
             }
         }
