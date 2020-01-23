@@ -462,11 +462,11 @@ public class HarmonySequenceScript : MonoBehaviour
 
     private IEnumerator ModulePass()
     {
+        moduleSolved = true;
         Text[2].gameObject.SetActive(true);
         StartCoroutine(Harmony());
         yield return new WaitUntil(() => !harmonyRunning);
         GetComponent<KMBombModule>().HandlePass();
-        moduleSolved = true;
         Debug.LogFormat(@"[Harmony Sequence #{0}] You passed the module - Strikes caused by this module: {1}", moduleId, Strike);
         StopAllCoroutines();
     }
@@ -527,6 +527,15 @@ public class HarmonySequenceScript : MonoBehaviour
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
+        do
+        {
+            yield return "trycancel";
+        } while (stageCompleteActive || strikeHandlerActive);
+        if (moduleSolved)
+        {
+            yield return "sendtochaterror The module has entered its Harmony Phase, causing this module to be solve shortly.";
+            yield break;
+        }
         if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             if (listen)
@@ -542,7 +551,7 @@ public class HarmonySequenceScript : MonoBehaviour
         {
             if (!listen)
             {
-                yield return "sendtochaterror The module is not listening.";
+                yield return "sendtochaterror The module is already not listening.";
                 yield break;
             }
             yield return null;
@@ -591,6 +600,7 @@ public class HarmonySequenceScript : MonoBehaviour
                 yield return new WaitForSeconds(.1f);
             }
             yield return numbers.Select(n => SeqBtns[n.Value - 1]).ToArray();
+            yield return "solve";
             yield break;
         }
     }
