@@ -493,7 +493,6 @@ public class HarmonySequenceScript : MonoBehaviour
     {
         while (seqFlashActive)
         {
-            yield return new WaitForSeconds(1f);
 
             for (int i = 0; i < 4; i++)
             {
@@ -505,7 +504,7 @@ public class HarmonySequenceScript : MonoBehaviour
                 if (listen)
                     Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][i]], transform);
                 SeqLights[i].gameObject.SetActive(true);
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.4f);
                 SeqLights[i].gameObject.SetActive(false);
             }
         }
