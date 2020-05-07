@@ -10,7 +10,7 @@ public class HarmonySequenceScript : MonoBehaviour
 
     public KMAudio Audio;
     public KMBombInfo Bomb;
-   
+
     static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
@@ -110,26 +110,26 @@ public class HarmonySequenceScript : MonoBehaviour
                 new[] { "p_g4", "p_c5", "p_e5", "p_g5" },
                 new[] { "p_f4", "p_a4", "p_c5", "p_f5" },
                 new[] { "p_c4", "p_e4", "p_g4", "p_c5" }
-            },           
-                         
-            new[]        
-            {            
+            },
+
+            new[]
+            {
                 new[] { "p_a4", "p_cis5", "p_e5", "p_a5"},
                 new[] { "p_e4", "p_gis4", "p_h4", "p_e5" },
                 new[] { "p_fis4", "p_a4", "p_cis5", "p_fis5" },
                 new[] { "p_d4", "p_fis4", "p_a4", "p_d5" }
-            },           
-                         
-            new[]        
-            {            
+            },
+
+            new[]
+            {
                 new[] { "p_d4", "p_f4", "p_a4", "p_d5"},
                 new[] { "p_ais4", "p_d5", "p_f5", "p_ais5" },
                 new[] { "p_f4", "p_a4", "p_c5", "p_f5" },
                 new[] { "p_c4", "p_e4", "p_g4", "p_c5" }
-            },           
-                         
-            new[]        
-            {            
+            },
+
+            new[]
+            {
                 new[] { "p_c4", "p_e4", "p_g4", "p_c5" },
                 new[] { "p_e4", "p_g4", "p_h4", "p_e5" },
                 new[] { "p_a4", "p_c5", "p_e5", "p_a5" },
@@ -253,10 +253,10 @@ public class HarmonySequenceScript : MonoBehaviour
     private int currentModuleInstrument = 0;
     private int lastModuleInstrument = 0;
 
-    
+
 
     private Coroutine seqFlash;
-   
+
 
     void Awake()
     {
@@ -363,7 +363,7 @@ public class HarmonySequenceScript : MonoBehaviour
 
     void Match(int btnPressed)
     {
-        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - Excepted Button #{2} - You pressed Button #{3}", moduleId, currentStage + 1, Array.IndexOf(stages[currentStage], correctNotes) + 1, btnPressed + 1);
+        Debug.LogFormat(@"[Harmony Sequence #{0}] Stage #{1} - Expected button #{2} - you pressed button #{3}", moduleId, currentStage + 1, Array.IndexOf(stages[currentStage], correctNotes) + 1, btnPressed + 1);
         if (btnPressed == Array.IndexOf(stages[currentStage], correctNotes))
         {
             Audio.PlaySoundAtTransform(harmonies[moduleInstrument][moduleHarmony][currentStage][stages[currentStage][btnPressed]], transform);
@@ -422,8 +422,8 @@ public class HarmonySequenceScript : MonoBehaviour
 
     private IEnumerator WaitForListen()
     {
-       yield return new WaitUntil(() => !stageCompleteActive);
-       LstnBtnPressed();
+        yield return new WaitUntil(() => !stageCompleteActive);
+        LstnBtnPressed();
     }
 
     private IEnumerator StageComplete()
@@ -526,16 +526,17 @@ public class HarmonySequenceScript : MonoBehaviour
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
+        Match m;
         do
         {
             yield return "trycancel";
         } while (stageCompleteActive || strikeHandlerActive);
         if (moduleSolved)
         {
-            yield return "sendtochaterror The module has entered its Harmony Phase, causing this module to be solve shortly.";
+            yield return "sendtochaterror The module has entered its Harmony Phase, causing this module to be solved shortly.";
             yield break;
         }
-        if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        else if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             if (listen)
             {
@@ -546,7 +547,7 @@ public class HarmonySequenceScript : MonoBehaviour
             LstnBtn.OnInteract();
             yield break;
         }
-        if (Regex.IsMatch(command, @"^\s*stop\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        else if (Regex.IsMatch(command, @"^\s*stop\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             if (!listen)
             {
@@ -557,15 +558,14 @@ public class HarmonySequenceScript : MonoBehaviour
             LstnBtn.OnInteractEnded();
             yield break;
         }
-        if (Regex.IsMatch(command, @"^\s*reset\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        else if (Regex.IsMatch(command, @"^\s*reset\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
             correctNotes = 0;
             DisableLights();
             yield break;
         }
-        Match m;
-        if ((m = Regex.Match(command, @"^\s*instrument\s+(xylo|piano|music|harp)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        else if ((m = Regex.Match(command, @"^\s*instrument\s+(xylo|piano|music|harp)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
         {
             yield return null;
             if (listen)
@@ -582,7 +582,7 @@ public class HarmonySequenceScript : MonoBehaviour
             }
             yield break;
         }
-        if ((m = Regex.Match(command, @"^\s*sound\s+([\d,;]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        else if ((m = Regex.Match(command, @"^\s*sound\s+([\d,;]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
         {
             var numbers = m.Groups[1].Value.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(str =>
             {
@@ -599,8 +599,38 @@ public class HarmonySequenceScript : MonoBehaviour
                 yield return new WaitForSeconds(.1f);
             }
             yield return numbers.Select(n => SeqBtns[n.Value - 1]).ToArray();
-            yield return "solve";
+            yield return new WaitUntil(() => stageCompleteActive || strikeHandlerActive);
+            if (currentStage == 3)
+                yield return "solve";
             yield break;
+        }
+        else
+        {
+            yield return "sendtochaterror Invalid Command";
+            yield break;
+        }
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        Debug.LogFormat(@"[Harmony Sequence #{0}] Module was force solved by TP", moduleId);
+
+        if (listen)
+        {
+            LstnBtn.OnInteractEnded();
+            yield return new WaitForSeconds(.1f);
+        }
+
+        while (!moduleSolved)
+        {
+            while (stageCompleteActive || strikeHandlerActive)
+                yield return true;
+
+            if (moduleSolved)
+                break;
+
+            SeqBtns[Array.IndexOf(stages[currentStage], correctNotes)].OnInteract();
+            yield return new WaitForSeconds(.2f);
         }
     }
 }
