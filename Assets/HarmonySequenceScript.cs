@@ -522,7 +522,7 @@ public class HarmonySequenceScript : MonoBehaviour
     }
 
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} start [start listening to the sequence] | !{0} stop [stop listening] | !{0} sound 1,2,3,4 [presses buttons in that order] | !{0} instrument music/xylo/piano/harp [sets the instrument] | !{0} reset [clears all inputted sounds]";
+    private readonly string TwitchHelpMessage = @"!{0} start [start listening to the sequence] | !{0} stop [stop listening] | !{0} sound 1234 [presses buttons in that order where 1 is the left-most button and 4 is the right-most button] | !{0} instrument music/xylo/piano/harp [sets the instrument] | !{0} reset [clears all inputted sounds]";
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -582,12 +582,12 @@ public class HarmonySequenceScript : MonoBehaviour
             }
             yield break;
         }
-        else if ((m = Regex.Match(command, @"^\s*sound\s+([\d,;]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        else if ((m = Regex.Match(command, @"^\s*sound\s+([\d]{4})$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
         {
-            var numbers = m.Groups[1].Value.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(str =>
+            var numbers = m.Groups[1].Value.Select(str =>
             {
                 int value;
-                return int.TryParse(str, out value) ? value : (int?)null;
+                return int.TryParse(str.ToString(), out value) ? value : (int?)null;
             }).ToArray();
             if (numbers.Length == 0 || numbers.Any(n => n == null || n.Value < 1 || n.Value > 4))
                 yield break;
@@ -602,6 +602,11 @@ public class HarmonySequenceScript : MonoBehaviour
             yield return new WaitUntil(() => stageCompleteActive || strikeHandlerActive);
             if (currentStage == 3)
                 yield return "solve";
+            yield break;
+        }
+        else if ((m = Regex.Match(command, @"^\s*sound\s+([\d]{1,3})$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        {
+            yield return @"sendtochaterror Not enough arguments for ""sound"". At least 4 unique digits are needed. ";
             yield break;
         }
         else
